@@ -1,0 +1,22 @@
+name: GitHub Commit Bot
+on:
+  schedule:
+    - cron: '0 12 * * *' # Runs daily at 12:00 PM
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm install
+      - name: Run bot
+        run: node bot.js
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}

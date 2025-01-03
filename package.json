@@ -4,7 +4,7 @@
   "description": "Bot for maintaining github commit",
   "license": "ISC",
   "author": "Jibon Krishna Roy",
-  "type": "commonjs",
+  "type": "module",
   "main": "bot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,84 +1,55 @@
 const { Octokit } = require("@octokit/rest");
-const fs = require("fs");
-const path = require("path");
 
-// Replace these with your GitHub details
-const TOKEN = "your_personal_access_token"; // Replace with your PAT
-const OWNER = "your_github_username"; // Replace with the repository owner
-const REPO = "your_repository_name"; // Replace with the repository name
+const octokit = new Octokit({ auth: process.env.TOKEN });
 
-const octokit = new Octokit({ auth: TOKEN });
+// Function to handle file creation or updates
+async function createOrUpdateFile(branch = "main") {
+  const filePath = "commit.txt"; // Dynamic file path
+  const fileContent = `Hello, this is a commit from GitHub Actions! Time: ${new Date().toISOString()}`;
 
-async function createCommit() {
   try {
-    // Read the file to commit (or generate content dynamically)
-    const filePath = path.join(__dirname, "commit.txt");
-    const fileContent = fs.readFileSync(filePath, "utf8");
-    const contentBase64 = Buffer.from(fileContent).toString("base64");
-
-    // Fetch the latest commit to get the SHA
-    const { data: refData } = await octokit.git.getRef({
-      owner: OWNER,
-      repo: REPO,
-      ref: "heads/main", // Adjust branch name if different
+    // Check if the file exists in the specified branch
+    const { data } = await octokit.repos.getContent({
+      owner: "jibon-roy", // Replace with your GitHub username
+      repo: "git-bot", // Replace with your repository name
+      path: filePath,
+      ref: branch,
     });
 
-    const latestCommitSha = refData.object.sha;
-
-    // Get the tree SHA of the latest commit
-    const { data: commitData } = await octokit.git.getCommit({
-      owner: OWNER,
-      repo: REPO,
-      commit_sha: latestCommitSha,
+    // Update the file if it exists
+    await octokit.repos.createOrUpdateFileContents({
+      owner: "jibon-roy",
+      repo: "git-bot",
+      path: filePath,
+      message: `Updated ${filePath} at ${new Date().toISOString()}`,
+      content: Buffer.from(fileContent).toString("base64"),
+      sha: data.sha, // Required for updating an existing file
+      branch,
     });
-
-    const treeSha = commitData.tree.sha;
-
-    // Create a new blob for the file
-    const { data: blobData } = await octokit.git.createBlob({
-      owner: OWNER,
-      repo: REPO,
-      content: contentBase64,
-      encoding: "base64",
-    });
-
-    // Create a new tree with the updated file
-    const { data: newTreeData } = await octokit.git.createTree({
-      owner: OWNER,
-      repo: REPO,
-      tree: [
-        {
-          path: "example.txt", // Path of the file in the repository
-          mode: "100644",
-          type: "blob",
-          sha: blobData.sha,
-        },
-      ],
-      base_tree: treeSha,
-    });
-
-    // Create a new commit
-    const { data: newCommitData } = await octokit.git.createCommit({
-      owner: OWNER,
-      repo: REPO,
-      message: "Automated commit by GitHub bot",
-      tree: newTreeData.sha,
-      parents: [latestCommitSha],
-    });
-
-    // Update the reference to point to the new commit
-    await octokit.git.updateRef({
-      owner: OWNER,
-      repo: REPO,
-      ref: "heads/main",
-      sha: newCommitData.sha,
-    });
-
-    console.log("Commit created successfully!");
+    console.log(`File updated successfully on branch: ${branch}`);
   } catch (error) {
-    console.error("Error creating commit:", error);
+    if (error.status === 404) {
+      // File does not exist, create it
+      await octokit.repos.createOrUpdateFileContents({
+        owner: "jibon-roy",
+        repo: "git-bot",
+        path: filePath,
+        message: `Created ${filePath} at ${new Date().toISOString()}`,
+        content: Buffer.from(fileContent).toString("base64"),
+        branch,
+      });
+      console.log(`File created successfully on branch: ${branch}`);
+    } else {
+      console.error("Error handling file:", error.message);
+    }
   }
 }
 
-// Run the bot
-createCommit();
+// Execute the bot for specific branches
+async function run() {
+  console.log("Running bot...");
+  await createOrUpdateFile("main"); // Commit to the main branch
+  await createOrUpdateFile("develop"); // Commit to the develop branch
+}
+
+run().catch((error) => console.error("Error running bot:", error));

@@ -1,0 +1,15 @@
+{
+  "name": "git-bot",
+  "version": "1.0.0",
+  "description": "Bot for maintaining github commit",
+  "license": "ISC",
+  "author": "Jibon Krishna Roy",
+  "type": "commonjs",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@octokit/rest": "^21.0.2"
+  }
+}

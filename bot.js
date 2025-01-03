@@ -9,12 +9,12 @@ const octokit = new Octokit({ auth: process.env.TOKEN });
  * @param {string} filePath - The path of the file to create or update.
  * @param {string} fileContent - The content to write to the file.
  */
-async function createOrUpdateFile(branch = "main", filePath = "dynamic-file.txt", fileContent = "") {
+async function createOrUpdateFile(branch = "main", filePath = "commit.txt", fileContent = "") {
   try {
     console.log(`Checking if the file exists in branch: ${branch}`);
     const { data } = await octokit.repos.getContent({
-      owner: "your-username", // Replace with your GitHub username
-      repo: "your-repository", // Replace with your repository name
+      owner: "jibon-roy", // Replace with your GitHub username
+      repo: "git-bot", // Replace with your repository name
       path: filePath,
       ref: branch,
     });
@@ -22,8 +22,8 @@ async function createOrUpdateFile(branch = "main", filePath = "dynamic-file.txt"
     // Update the file if it exists
     console.log(`File exists. Updating the file at path: ${filePath}`);
     await octokit.repos.createOrUpdateFileContents({
-      owner: "your-username",
-      repo: "your-repository",
+      owner: "jibon-roy",
+      repo: "git-bot",
       path: filePath,
       message: `Updated ${filePath} at ${new Date().toISOString()}`,
       content: Buffer.from(fileContent).toString("base64"),
@@ -36,8 +36,8 @@ async function createOrUpdateFile(branch = "main", filePath = "dynamic-file.txt"
       // File does not exist; create it
       console.log(`File does not exist. Creating a new file at path: ${filePath}`);
       await octokit.repos.createOrUpdateFileContents({
-        owner: "your-username",
-        repo: "your-repository",
+        owner: "jibon-roy",
+        repo: "git-bot",
         path: filePath,
         message: `Created ${filePath} at ${new Date().toISOString()}`,
         content: Buffer.from(fileContent).toString("base64"),

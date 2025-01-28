@@ -26,7 +26,8 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://github.com/jibon-roy/git-bot.git  # Use HTTPS URL
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/jibon-roy/git-bot.git
           git add README.md
           git commit -m "Update README.md with new WakaTime stats [Automated]" || echo "No changes to commit"
-          git push origin main  # Pushes to the 'main' branch (use the appropriate branch name if different)
+          git push origin main
+

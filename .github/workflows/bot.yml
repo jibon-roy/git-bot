@@ -1,33 +1,33 @@
-name: Update GitHub Status Overview
+# name: Update GitHub Status Overview
 
-on:
-  schedule:
-    - cron: '0 0 * * *' # Runs daily at midnight UTC
-  workflow_dispatch: # Allows manual triggers
+# on:
+#   schedule:
+#     - cron: '0 0 * * *' # Runs daily at midnight UTC
+#   workflow_dispatch: # Allows manual triggers
 
-jobs:
-  update-readme:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+# jobs:
+#   update-readme:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v3
 
-      - name: Update README.md Text
-        run: |
-          # Example: Appending some text to README
-          echo "## WakaTime Stats" >> README.md
-          echo "Generated on: $(date)" >> README.md
-          echo "Your WakaTime stats will appear below:" >> README.md
+#       - name: Update README.md Text
+#         run: |
+#           # Example: Appending some text to README
+#           echo "## WakaTime Stats" >> README.md
+#           echo "Generated on: $(date)" >> README.md
+#           echo "Your WakaTime stats will appear below:" >> README.md
 
-          # Alternatively, replace existing text or append it using `sed`
-          sed -i 's/OldText/UpdatedText/' README.md  # Replace 'OldText' with 'UpdatedText'
+#           # Alternatively, replace existing text or append it using `sed`
+#           sed -i 's/OldText/UpdatedText/' README.md  # Replace 'OldText' with 'UpdatedText'
 
-      - name: Commit Changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/jibon-roy/git-bot.git
-          git add README.md
-          git commit -m "Update README.md with new WakaTime stats [Automated]" || echo "No changes to commit"
-          git push origin main
+#       - name: Commit Changes
+#         run: |
+#           git config --global user.name "github-actions[bot]"
+#           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/jibon-roy/git-bot.git
+#           git add README.md
+#           git commit -m "Update README.md with new WakaTime stats [Automated]" || echo "No changes to commit"
+#           git push origin main
 
